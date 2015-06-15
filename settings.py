@@ -20,7 +20,8 @@ LOCAL_UPDATE_FOLDER = ROOT_FOLDER + '/Inbox/Update/'
 LOCAL_LOG_FOLDER = ROOT_FOLDER + '/Logs/'
 AKAMAI_PATH_PREFIX = '/8619/_!'
 
-
+# Search most recent xmls in FTP (in days)
+MOST_RECENT_DAYS = 30
 
 
 
@@ -30,6 +31,7 @@ WMG_CONF = {
     'SERVER':   'ftp.mtvintldigital.com',  # 'ftp.mtvintldigital.com'
     'USER':     'watsond',
     'PASSWORD': 'watsond789',
+    'PORT': 22,
     'ROOT_FOLDER':  '/home/ftp/wmg/wmg/new_release/Assets_Only/',
     'LOCAL_FOLDER': LOCAL_VIDEOS_FOLDER + 'WMG/',
     'VIDEO_FILE_EXTENSION': 'mp4'
