@@ -21,8 +21,9 @@ LOCAL_LOG_FOLDER = ROOT_FOLDER + '/Logs/'
 AKAMAI_PATH_PREFIX = '/8619/_!'
 
 # Search most recent xmls in FTP (in days)
-MOST_RECENT_DAYS = 30
-
+MOST_RECENT_DAYS = 3
+# Delete old contents in FTP (in days)
+TO_DELETE_DAYS = 120
 
 
 

@@ -32,10 +32,10 @@ class MainController():
         if cls.Partner:
             return cls.Partner
         else:
-            raise Exception("Partner hadn't been set up yet. MainController.get_partner)")
+            raise Exception("Partner hadn't been set up yet. (MainController.get_partner)")
 
-
-MainController.set_partner(1)
-MainController.set_partner("UMG")
-print MainController.Session
+#
+# MainController.set_partner(1)
+# MainController.set_partner("UMG")
+# print MainController.Session
 

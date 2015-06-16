@@ -1,35 +1,49 @@
 __author__ = 'Hao Lin'
-
-from ftplib import FTP
 import time
+import sys
 import os.path
 import paramiko
 # paramiko is used to establish SFTP connection (since regular FTP not work)
 # See docs: http://paramiko-docs.readthedocs.org/en/latest/api/sftp.html
 from settings import WMG_CONF, MOST_RECENT_DAYS
 
-class WmgFtpHandler:
+class FtpHandler(object):
+
+    seconds_from_now = 24*60*60 * MOST_RECENT_DAYS
 
     def __init__(self):
+        self._new_xml_list = []
+        self._update_xml_list = []
 
+    def get_xml_list(self):
+        return self._new_xml_list
+
+    def get_update_xml_list(self):
+        return self._update_xml_list
+
+
+class WmgFtpHandler(FtpHandler):
+    def __init__(self, update=False):
         self.root_folder = WMG_CONF['ROOT_FOLDER']
         self.video_extension = WMG_CONF['VIDEO_FILE_EXTENSION']
-
         transport = paramiko.Transport((WMG_CONF['SERVER'], WMG_CONF['PORT']))
         transport.connect(username=WMG_CONF['USER'], password=WMG_CONF['PASSWORD'])
         sftp = paramiko.SFTPClient.from_transport(transport)
         self.sftp = sftp
-        print "connected"
+        if update is False:
+            self._new_xml_list = self.get_xml_list()
+        else:
+            self._update_xml_list = self.get_xml_list(update=True)
+        self._name = "WMG FTP Handler"
 
-    def get_xml_list(self):
+    def get_xml_list(self, update=False):
         xml_paths = []
-        seconds_from_now = 24*60*60 * MOST_RECENT_DAYS
         print "Getting WMG first level folders in " + self.root_folder
         first_level_dir_attrs = self.sftp.listdir_attr(self.root_folder)
         # Example of a dir_attr: (drwxrws---   1 518      509          4096 13 Feb 22:05 20150214023209453)
         for first_level_dir_attr in first_level_dir_attrs:
 
-            if abs(int(time.time()) - first_level_dir_attr.st_mtime) < seconds_from_now:
+            if abs(int(time.time()) - first_level_dir_attr.st_mtime) < FtpHandler.seconds_from_now:
                 print "Getting WMG second level folders in "+first_level_dir_attr.filename
                 second_level_dirs = self.sftp.listdir(os.path.join(self.root_folder, first_level_dir_attr.filename))
                 for second_level_dir in second_level_dirs:
@@ -40,9 +54,10 @@ class WmgFtpHandler:
                                                                   first_level_dir_attr.filename, second_level_dir))
                         if xml_path:
                             xml_paths.append(xml_path)
-                            print xml_paths
             else:
                 print "Folder "+first_level_dir_attr.filename+" exceeds "+str(MOST_RECENT_DAYS)+" days... Skip!"
+
+        return xml_paths
 
     def get_xml_path(self, folder_path, update=False):
         """
@@ -78,5 +93,46 @@ class WmgFtpHandler:
                 return False
 
 
-w = WmgFtpHandler()
-w.get_xml_list()
+
+class UmgFtpHandler(FtpHandler):
+    def __init__(self):
+
+        self._name = "UMG FTP Handler"
+
+
+class SonyFtpHandler(FtpHandler):
+    def __init__(self):
+
+        self._name = "SONY FTP Handler"
+
+
+class EmiFtpHandler(FtpHandler):
+    def __init__(self):
+
+        self._name = "EMI FTP Handler"
+
+
+class VplFtpHandler(FtpHandler):
+    def __init__(self):
+
+        self._name = "VPL FTP Handler"
+
+
+class FtpHandlerFactory(object):
+    @staticmethod
+    def create_handler(label, update=False):
+        if label == "WMG" or label == "1" or label == 1:
+            return WmgFtpHandler(update)
+        elif label == "UMG" or label == "3" or label == 3:
+            return UmgFtpHandler(update)
+        elif label == "SONY" or label == "4" or label == 4:
+            return SonyFtpHandler(update)
+        elif label == "EMI" or label == "5" or label == 5:
+            return EmiFtpHandler(update)
+        elif label == "VPL" or label == "10" or label == 10:
+            return VplFtpHandler(update)
+        else:
+            sys.exit()
+
+handler = FtpHandlerFactory.create_handler("WMG", update=False)
+print handler.get_xml_list()
