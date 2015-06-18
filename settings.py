@@ -10,6 +10,7 @@ MYSQL_DB = "mvi_live"
 
 # Folders paths
 ROOT_FOLDER = os.path.dirname(os.path.abspath(__file__))
+temp_download_folder = '/Users/armsky/TEMP'
 
 DB_BACKUPS_FOLDER = ROOT_FOLDER + '/Docs/SqlBackups/'
 LOCAL_METADATA_FOLDER = ROOT_FOLDER + '/Inbox/Metadata/'
@@ -34,6 +35,17 @@ WMG_CONF = {
     'PASSWORD': 'watsond789',
     'PORT': 22,
     'ROOT_FOLDER':  '/home/ftp/wmg/wmg/new_release/Assets_Only/',
-    'LOCAL_FOLDER': LOCAL_VIDEOS_FOLDER + 'WMG/',
+    'LOCAL_VIDEO_FOLDER': LOCAL_VIDEOS_FOLDER + 'WMG/',
+    'LOCAL_META_FOLDER': LOCAL_METADATA_FOLDER + 'WMG/',
+    'VIDEO_FILE_EXTENSION': 'mp4'
+}
+TEST_WMG_CONF = {
+    'SERVER':   'ftp.mtvintldigital.com',  # 'ftp.mtvintldigital.com'
+    'USER':     'watsond',
+    'PASSWORD': 'watsond789',
+    'PORT': 22,
+    'ROOT_FOLDER':  '/home/ftp/wmg/wmg/new_release/Assets_Only/',
+    'LOCAL_VIDEO_FOLDER': '/Users/armsky/TEMP/Videos/WMG/',
+    'LOCAL_META_FOLDER': '/Users/armsky/TEMP/Metadata/WMG/',
     'VIDEO_FILE_EXTENSION': 'mp4'
 }
