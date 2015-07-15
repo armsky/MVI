@@ -28,32 +28,38 @@ class MetadataDownload(object):
 
     @classmethod
     def filter_new_metadata(cls, xml_paths):
-        new_xml_paths = []
+        new_xml_locations = []
         session = Connection.create_session()
         stored_paths = [seq[0] for seq in session.query(Videos.ftpInfoLocation).filter_by(partnerId=cls.partner.id).all()]
         for xml_path in xml_paths:
             if xml_path not in stored_paths:
-                new_xml_paths.append(xml_path)
-        print new_xml_paths
+                xml_location = {}
+                filename = xml_path.split('/')[-1]
+                xml_location['remote_folder'] = xml_path[ :-len(filename)]
+                xml_location['local_folder'] = cls.handler.local_meta_folder
+                xml_location['archive_folder'] = cls.handler.archive_meta_folder
+                xml_location['filename'] = filename
+                new_xml_locations.append(xml_location)
+        print new_xml_locations
 
     @classmethod
-    def download_new_xmls(cls, xml_paths):
+    def download_new_xmls(cls, xml_locations):
         try:
             start_time = time.time()
-            if xml_paths:
+            if xml_locations:
                 if cls.partner.name == "UMG":
                     # TODO: UMG does not need ftp
                     print "nah..."
                 else:
-                    for xml_path in xml_paths:
-                        filename = xml_path.split('/')[-1]
-                        sys.stdout.write("Downloading: %s" % xml_path)
+                    for xml_location in xml_locations:
+                        sys.stdout.write("Downloading: %s" % xml_location['remote_folder']+xml_location['filename'])
                         try:
-                            cls.handler.sftp.get(xml_path, cls.handler.local_meta_folder+filename)
+                            cls.handler.sftp.get(xml_location['remote_folder']+xml_location['filename'],
+                                                 xml_location['local_folder']+xml_location['filename'])
                             sys.stdout.write("      Success.\n")
                         except:
                             sys.stdout.write("      Failed...skip\n")
-                            xml_paths.remove(xml_path)
+                            xml_locations.remove(xml_location)
             else:
                 print "No new XMLs need to be downloaded for "+cls.partner.name
             end_time = time.time()
@@ -64,6 +70,6 @@ class MetadataDownload(object):
 
 
 # MetadataDownload.get_metadata_list_from_ftp()
-xml_paths = ['/home/ftp/wmg/wmg/new_release/Assets_Only/20150618190943831/A10306F0000002WJQD/A10306F0000002WJQD.xml']
+xml_locations = ['/home/ftp/wmg/wmg/new_release/Assets_Only/20150618190943831/A10306F0000002WJQD/A10306F0000002WJQD.xml']
 # MetadataDownload.filter_new_metadata(xml_paths)
 MetadataDownload.download_new_xmls(xml_paths)

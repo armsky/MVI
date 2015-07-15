@@ -35,6 +35,7 @@ class WmgFtpHandler(FtpHandler):
         self.root_folder = WMG_CONF['ROOT_FOLDER']
         self.local_video_folder = WMG_CONF['LOCAL_VIDEO_FOLDER']
         self.local_meta_folder = WMG_CONF['LOCAL_META_FOLDER']
+        self.archive_meta_folder = WMG_CONF['ARCHIVE_METADATA_FOLDER']
         self.video_extension = WMG_CONF['VIDEO_FILE_EXTENSION']
         transport = paramiko.Transport((WMG_CONF['SERVER'], WMG_CONF['PORT']))
         transport.connect(username=WMG_CONF['USER'], password=WMG_CONF['PASSWORD'])

@@ -2,6 +2,7 @@ __author__ = 'Hao Lin'
 
 from models.mvi_models import Partners
 from utils.database.connection import Connection
+from utils.processes.metadata_download import *
 
 class MainController(object):
 
@@ -38,6 +39,10 @@ class MainController(object):
             return cls.Partner
         else:
             raise Exception("Partner hadn't been set up yet. (MainController.get_partner)")
+
+
+    def import_metadata(self):
+        MetadataDownload.get_metadata_list_from_ftp()
 
 # #
 # MainController.set_partner(1)

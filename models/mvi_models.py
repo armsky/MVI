@@ -146,8 +146,5 @@ class Partners(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(64), nullable=False)
 
-    def __init__(self, partner_id, partner_name):
-        self.id = partner_id
-        self.name = partner_name
 
 Base.metadata.create_all(engine, checkfirst=True)

@@ -37,6 +37,7 @@ WMG_CONF = {
     'ROOT_FOLDER':  '/home/ftp/wmg/wmg/new_release/Assets_Only/',
     'LOCAL_VIDEO_FOLDER': LOCAL_VIDEOS_FOLDER + 'WMG/',
     'LOCAL_META_FOLDER': LOCAL_METADATA_FOLDER + 'WMG/',
+    'ARCHIVE_METADATA_FOLDER': ARCHIVE_METADATA_FOLDER + 'WMG/',
     'VIDEO_FILE_EXTENSION': 'mp4'
 }
 TEST_WMG_CONF = {
@@ -47,5 +48,6 @@ TEST_WMG_CONF = {
     'ROOT_FOLDER':  '/home/ftp/wmg/wmg/new_release/Assets_Only/',
     'LOCAL_VIDEO_FOLDER': '/Users/armsky/TEMP/Videos/WMG/',
     'LOCAL_META_FOLDER': '/Users/armsky/TEMP/Metadata/WMG/',
+    'ARCHIVE_METADATA_FOLDER': '/Users/armsky/TEMP/Archive/WMG/',
     'VIDEO_FILE_EXTENSION': 'mp4'
 }
