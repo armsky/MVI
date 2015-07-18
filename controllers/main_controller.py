@@ -2,9 +2,14 @@ __author__ = 'Hao Lin'
 
 from models.mvi_models import Partners
 from utils.database.connection import Connection
-from utils.processes.metadata_download import *
+
 
 class MainController(object):
+    __shared_state = {}
+
+
+    def __init__(self):
+        self.__dict__ = self.__shared_state
 
     # The current Partner object
     Partner = None
@@ -33,6 +38,8 @@ class MainController(object):
         if not isinstance(cls.Partner, Partners):
             raise TypeError("Unexpected type for parameter 'partner'. (MainController.set_partner)")
 
+        return cls.Partner
+
     @classmethod
     def get_partner(cls):
         if cls.Partner:
@@ -40,11 +47,6 @@ class MainController(object):
         else:
             raise Exception("Partner hadn't been set up yet. (MainController.get_partner)")
 
-
-    def import_metadata(self):
-        MetadataDownload.get_metadata_list_from_ftp()
-
-# #
-# MainController.set_partner(1)
-# print MainController.Partner.name
+    # def import_metadata(self):
+    #     MetadataDownload.get_metadata_list_from_ftp()
 

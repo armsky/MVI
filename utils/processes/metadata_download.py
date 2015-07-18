@@ -7,18 +7,19 @@ from utils.ftp_handlers import ftp_handler
 from utils.database.connection import Connection
 from models.mvi_models import Videos
 
-# TODO: test only, need to remove this
-MainController.set_partner(1)
 
 class MetadataDownload(object):
 
     partner = MainController.get_partner()
+    print type(partner.name), partner.name
     handler = ftp_handler.FtpHandlerFactory.create_handler(partner.name)
+    print handler
 
     @classmethod
     def get_metadata_list_from_ftp(cls):
         try:
             start_time = time.time()
+            print "start"
             xml_paths = cls.handler.get_new_xml_list()
             end_time = time.time()
             print "\n===get_metadata_list_from_ftp Elapsed Time: "+str(int(end_time-start_time))+" seconds==="
@@ -35,7 +36,7 @@ class MetadataDownload(object):
             if xml_path not in stored_paths:
                 xml_location = {}
                 filename = xml_path.split('/')[-1]
-                xml_location['remote_folder'] = xml_path[ :-len(filename)]
+                xml_location['remote_folder'] = xml_path[:-len(filename)]
                 xml_location['local_folder'] = cls.handler.local_meta_folder
                 xml_location['archive_folder'] = cls.handler.archive_meta_folder
                 xml_location['filename'] = filename
@@ -70,6 +71,6 @@ class MetadataDownload(object):
 
 
 # MetadataDownload.get_metadata_list_from_ftp()
-xml_locations = ['/home/ftp/wmg/wmg/new_release/Assets_Only/20150618190943831/A10306F0000002WJQD/A10306F0000002WJQD.xml']
+# xml_locations = ['/home/ftp/wmg/wmg/new_release/Assets_Only/20150618190943831/A10306F0000002WJQD/A10306F0000002WJQD.xml']
 # MetadataDownload.filter_new_metadata(xml_paths)
-MetadataDownload.download_new_xmls(xml_paths)
+# MetadataDownload.download_new_xmls(xml_paths)

@@ -6,10 +6,13 @@ import abc
 import paramiko
 # paramiko is used to establish SFTP connection (since regular FTP not work)
 # See docs: http://paramiko-docs.readthedocs.org/en/latest/api/sftp.html
+
 # TODO: TEST_WMG_CONF need to be deleted after local test done
 from settings import WMG_CONF, TEST_WMG_CONF, MOST_RECENT_DAYS
 
+# TODO: remove this line when testing in server
 WMG_CONF = TEST_WMG_CONF
+
 
 class FtpHandler(object):
     __metaclass__ = abc.ABCMeta
@@ -39,6 +42,7 @@ class WmgFtpHandler(FtpHandler):
         self.video_extension = WMG_CONF['VIDEO_FILE_EXTENSION']
         transport = paramiko.Transport((WMG_CONF['SERVER'], WMG_CONF['PORT']))
         transport.connect(username=WMG_CONF['USER'], password=WMG_CONF['PASSWORD'])
+        print "entered"
         sftp = paramiko.SFTPClient.from_transport(transport)
         self.sftp = sftp
 
@@ -157,7 +161,7 @@ class FtpHandlerFactory(object):
 def main():
     handler = FtpHandlerFactory.create_handler("WMG")
     print handler
-    print handler.get_update_xml_list()
+    print handler.get_xml_list()
 
 if __name__ == "__main__":
     main()

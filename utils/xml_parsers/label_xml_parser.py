@@ -4,6 +4,8 @@ import xml.etree.ElementTree as ET
 import datetime
 from models.mvi_models import Videos, States
 from utils.database.connection import Connection
+import xml_parser_helper as helper
+
 
 class LabelXmlParser(object):
 
@@ -54,32 +56,86 @@ class LabelXmlParser(object):
 
     def get_meta(self):
         """
+        isrc, duration, trackName, artist, subLabel, genres, rating
+        bitrate, height, width, widescreen, originalName, sourceFolder
+        upc, GRid, mviId
 
-        bitrate, originalName, sourceFolder, duration, height, width, widescreen, genres,
-        rating, partner, subLabel, artist, trackName, isrc, upc, territories, mviId, GRid
+        , partnerId, territories,
         """
-        # For WMG
-        VideoDetailsByTerritory = self.root.findall("./ResourceList/Video/VideoDetailsByTerritory/")
-        print VideoDetailsByTerritory, len(VideoDetailsByTerritory)
-        for one_detail in VideoDetailsByTerritory:
-            if one_detail.tag == "TechnicalVideoDetails":
-                TechnicalVideoDetails = one_detail.find("TechnicalVideoDetails")
-                for tech_detail in TechnicalVideoDetails:
-                    if tech_detail.tag == "":
-                        self.video. = one_detail.text
-            elif one_detail.tag == "":
-                self.video. = one_detail.text
-            elif one_detail.tag == "":
-                self.video. = one_detail.text
-            elif one_detail.tag == "":
-                self.video. = one_detail.text
-            elif one_detail.tag == "":
-                self.video. = one_detail.text
-            elif one_detail.tag == "":
-                self.video. = one_detail.text
-            elif one_detail.tag == "":
-                self.video. = one_detail.text
-            print one_detail.tag
+        # TODO: right now for WMG only
+
+        # isrc
+        isrc = self.root.find("./ResourceList/Video/VideoId/ISRC").text
+        self.video.isrc = isrc
+
+        # trackName
+        track_name = self.root.find("./ResourceList/Video/ReferenceTitle/TitleText").text
+        self.video.trackName = track_name
+
+        # duration
+        duration = self.root.find("./ResourceList/Video/Duration").text
+        duration = helper.ddex_time_to_seconds(duration)
+        self.video.duration = duration
+
+        detail = self.root.find("./ResourceList/Video/VideoDetailsByTerritory")
+
+        # artist
+        artist = detail.find("./DisplayArtist/PartyName/FullName").text
+        self.video.artist = artist
+
+        # subLabel
+        sub_label = detail.findall("./LabelName")[0].text
+        self.video.subLabel = sub_label
+
+        # genre
+        genre = detail.find("./Genre/GenreText").text
+        self.video.genre = genre
+
+        # rating
+        rating = detail.find("./ParentalWarningType").text
+        self.video.rating = rating
+
+        technical_detail = detail.find("./TechnicalVideoDetails")
+
+        # bitrate
+        bitrate_element = technical_detail.find("./OverallBitRate")
+        self.video.bitrate = bitrate_element.text + " " + bitrate_element.get("UnitOfMeasure")
+
+        # height
+        height = technical_detail.find("./ImageHeight").text
+        self.video.height = height
+
+        # width
+        width = technical_detail.find("./ImageWidth").text
+        self.video.width = width
+
+        # widescreen
+        self.video.widescreen = helper.is_widescreen(height, width)
+
+        file_detail = technical_detail.find("./File")
+
+        # originalName
+        original_name = file_detail.find("./FileName").text
+        self.video.originalName = original_name
+
+        # sourceFolder
+        source_folder = file_detail.find("./FilePath").text
+        self.video.sourceFolder = self.xml_location['remote_folder'] + source_folder
+
+        # upc (GRid)
+        upc = self.root.find("./ReleaseList/Release").find("./ReleaseId/GRid").text
+        self.video.upc = upc
+        self.video.GRid = upc
+
+        # partnerId
+
+        # mviId
+
+
+
+        # TODO: featuredArtist
+
+        print self.video
 
 
     def get_start_date(self):
@@ -93,10 +149,13 @@ class LabelXmlParser(object):
     def save_to_database(self):
         return False
 
+
+
 location = {
+    'remote_folder' : '/Fake/path/for/now/',
     'local_folder'  : '/Users/armsky/TEMP/Metadata/WMG/',
     'filename'      : 'A10302B0003031354U.xml'
 }
-parser = LabelXmlParser("EMI", location)
+parser = LabelXmlParser("WMG", location)
 # parser.get_state()
 parser.get_meta()

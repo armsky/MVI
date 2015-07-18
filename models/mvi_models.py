@@ -1,5 +1,6 @@
 __author__ = 'Hao Lin'
 
+from pprint import pprint
 from utils.database.connection import Connection
 from sqlalchemy import *
 from sqlalchemy.orm import relationship, backref
@@ -55,11 +56,11 @@ class Videos(Base):
     sendToUmaDate = Column(DateTime, default=func.now())
     sourceFolder = Column(String(512))
     subLabel = Column(String(256))
+    subTitle = Column(String(256))
     startDate = Column(Date)
     endDate = Column(Date)
     territories = Column(String(1024))
     trackName = Column(String(256))
-    subTitle = Column(String(256))
     umaId = Column(Integer)
     upc = Column(String(32))
     widescreen = Column(Boolean)
@@ -70,6 +71,10 @@ class Videos(Base):
     featuredArtist2 = Column(String(256))
     featuredArtist3 = Column(String(256))
     GRid = Column(String(256))
+
+    def __str__(self):
+        attrs = vars(self)
+        return "\n\t" + "\n\t".join("%s: %s" % item for item in attrs.items())
 
 
 class EncodedVideos(Base):
